@@ -1,6 +1,7 @@
 import type {
   User, Category, Ingredient, MealType,
   DietCategoryRule, DietMacroTarget, MealLog, DietConfig,
+  StockItem, CreateStockItemDto, UpdateStockItemDto,
   CreateUserDto, UpdateUserDto,
   CreateCategoryDto, UpdateCategoryDto,
   CreateIngredientDto, UpdateIngredientDto,
@@ -60,6 +61,13 @@ export interface MealLogRepository {
   delete(id: string): Promise<void>
 }
 
+export interface StockRepository {
+  findByUserId(userId: string): Promise<StockItem[]>
+  create(dto: CreateStockItemDto): Promise<StockItem>
+  update(id: string, dto: UpdateStockItemDto): Promise<StockItem>
+  delete(id: string): Promise<void>
+}
+
 // ─────────────────────────────────────────────────────────────
 // Aggregate
 // ─────────────────────────────────────────────────────────────
@@ -71,4 +79,5 @@ export interface Repositories {
   mealTypes: MealTypeRepository
   diet: DietRepository
   mealLogs: MealLogRepository
+  stock: StockRepository
 }

@@ -109,3 +109,23 @@ export const analysisRequestSchema = z.object({
   mealTypeId: uuid,
   items: z.array(mealLogItemSchema).min(1),
 })
+
+// ─────────────────────────────────────────────────────────────
+// Stock
+// ─────────────────────────────────────────────────────────────
+
+const UNIDADES = ['u', 'kg', 'g', 'L', 'ml', 'docena', 'paquete'] as const
+
+export const createStockItemSchema = z.object({
+  userId: uuid,
+  ingredientId: uuid,
+  cantidad: positiveNumber,
+  unidad: z.enum(UNIDADES),
+  minimo: positiveNumber,
+})
+
+export const updateStockItemSchema = z.object({
+  cantidad: positiveNumber.optional(),
+  unidad: z.enum(UNIDADES).optional(),
+  minimo: positiveNumber.optional(),
+})

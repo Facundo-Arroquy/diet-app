@@ -9,11 +9,11 @@ export function getSupabaseClient(): SupabaseClient {
   if (_client) return _client
 
   const url = process.env.SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const key = process.env.SUPABASE_SERVICE_ROLE
 
   if (!url || !key) {
     throw new Error(
-      'Faltan variables de entorno SUPABASE_URL y/o SUPABASE_SERVICE_ROLE_KEY. ' +
+      'Faltan variables de entorno SUPABASE_URL y/o SUPABASE_SERVICE_ROLE. ' +
       'Copiá .env.example a .env.local y completá los valores.'
     )
   }

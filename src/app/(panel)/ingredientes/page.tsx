@@ -28,6 +28,7 @@ export default function IngredientesPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<Ingredient | null>(null)
   const [search, setSearch] = useState('')
+  const [selectedCat, setSelectedCat] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true); setError(null)
@@ -43,9 +44,13 @@ export default function IngredientesPage() {
   const catMap = new Map(categories.map(c => [c.id, c.nombre]))
   const flatCats = flattenCategoryTree(buildCategoryTree(categories))
 
-  const filtered = ingredients.filter(i =>
-    i.nombre.toLowerCase().includes(search.toLowerCase())
-  )
+  const sortedCats = [...categories].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
+
+  const filtered = ingredients.filter(i => {
+    if (search && !i.nombre.toLowerCase().includes(search.toLowerCase())) return false
+    if (selectedCat && i.categoryId !== selectedCat) return false
+    return true
+  })
 
   const openCreate = () => {
     setEditingIng(null)
@@ -111,8 +116,8 @@ export default function IngredientesPage() {
         }
       />
 
-      {/* Search */}
-      <div className="mb-4">
+      {/* Search + filtro categoría */}
+      <div className="mb-4 space-y-2">
         <input
           type="search"
           placeholder="Buscar ingrediente..."
@@ -120,6 +125,25 @@ export default function IngredientesPage() {
           onChange={e => setSearch(e.target.value)}
           className="w-full sm:w-64 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
+        {sortedCats.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => setSelectedCat(null)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${selectedCat === null ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            >
+              Todas
+            </button>
+            {sortedCats.map(c => (
+              <button
+                key={c.id}
+                onClick={() => setSelectedCat(c.id === selectedCat ? null : c.id)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${selectedCat === c.id ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {c.nombre}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {loading ? <PageLoader /> : error ? (

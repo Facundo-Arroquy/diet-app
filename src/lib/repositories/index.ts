@@ -6,6 +6,7 @@ import { SupabaseIngredientRepository } from './supabase/SupabaseIngredientRepos
 import { SupabaseMealTypeRepository } from './supabase/SupabaseMealTypeRepository'
 import { SupabaseDietRepository } from './supabase/SupabaseDietRepository'
 import { SupabaseMealLogRepository } from './supabase/SupabaseMealLogRepository'
+import { SupabaseStockRepository } from './supabase/SupabaseStockRepository'
 
 let _repos: Repositories | null = null
 
@@ -30,6 +31,7 @@ export function getRepositories(): Repositories {
       mealTypes: new SupabaseMealTypeRepository(db),
       diet: new SupabaseDietRepository(db),
       mealLogs: new SupabaseMealLogRepository(db),
+      stock: new SupabaseStockRepository(db),
     }
     return _repos
   }

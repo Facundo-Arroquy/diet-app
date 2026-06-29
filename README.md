@@ -38,7 +38,7 @@ Editá `.env.local`:
 
 ```env
 SUPABASE_URL=https://tu-proyecto.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=tu-service-role-key
+SUPABASE_SERVICE_ROLE=tu-service-role-key
 STORAGE=supabase
 ```
 
@@ -83,7 +83,7 @@ vercel --prod
    | Variable | Valor |
    |---|---|
    | `SUPABASE_URL` | Tu URL de Supabase |
-   | `SUPABASE_SERVICE_ROLE_KEY` | Tu service role key |
+   | `SUPABASE_SERVICE_ROLE` | Tu service role key |
    | `STORAGE` | `supabase` |
 3. Deploy.
 

@@ -185,3 +185,32 @@ export interface DietConfig {
   categoryRules: DietCategoryRule[]
   macroTarget: DietMacroTarget | null
 }
+
+// ─────────────────────────────────────────────────────────────
+// Stock de cocina
+// ─────────────────────────────────────────────────────────────
+
+export interface StockItem {
+  id: string
+  userId: string
+  ingredientId: string
+  ingredientNombre: string
+  cantidad: number
+  unidad: string
+  minimo: number
+  updatedAt: string
+}
+
+export interface CreateStockItemDto {
+  userId: string
+  ingredientId: string
+  cantidad: number
+  unidad: string
+  minimo: number
+}
+
+export interface UpdateStockItemDto {
+  cantidad?: number
+  unidad?: string
+  minimo?: number
+}

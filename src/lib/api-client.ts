@@ -6,6 +6,7 @@
 import type {
   User, Category, Ingredient, MealType,
   DietConfig, MealLog, AnalysisResult, MealLogWithAnalysis,
+  StockItem, CreateStockItemDto, UpdateStockItemDto,
   CreateUserDto, UpdateUserDto,
   CreateCategoryDto, UpdateCategoryDto,
   CreateIngredientDto, UpdateIngredientDto,
@@ -112,4 +113,16 @@ export const mealLogsApi = {
 export const analysisApi = {
   preview: (req: AnalysisRequest) =>
     apiFetch<AnalysisResult>('/api/analysis', { method: 'POST', body: JSON.stringify(req) }),
+}
+
+// ─── Stock ────────────────────────────────────────────────────
+
+export const stockApi = {
+  list: (userId: string) => apiFetch<StockItem[]>(`/api/stock?userId=${userId}`),
+  create: (dto: CreateStockItemDto) =>
+    apiFetch<StockItem>('/api/stock', { method: 'POST', body: JSON.stringify(dto) }),
+  update: (id: string, dto: UpdateStockItemDto) =>
+    apiFetch<StockItem>(`/api/stock/${id}`, { method: 'PATCH', body: JSON.stringify(dto) }),
+  delete: (id: string) =>
+    apiFetch<void>(`/api/stock/${id}`, { method: 'DELETE' }),
 }
