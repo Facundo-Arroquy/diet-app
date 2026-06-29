@@ -114,7 +114,7 @@ export const analysisRequestSchema = z.object({
 // Stock
 // ─────────────────────────────────────────────────────────────
 
-const UNIDADES = ['u', 'kg', 'g', 'L', 'ml', 'docena', 'paquete'] as const
+export const UNIDADES = ['u', 'kg', 'g', 'L', 'ml', 'docena', 'paquete'] as const
 
 export const createStockItemSchema = z.object({
   userId: uuid,
@@ -128,4 +128,19 @@ export const updateStockItemSchema = z.object({
   cantidad: positiveNumber.optional(),
   unidad: z.enum(UNIDADES).optional(),
   minimo: positiveNumber.optional(),
+})
+
+// ─────────────────────────────────────────────────────────────
+// Voz (Siri / Atajos) — alta/actualización de stock por nombre
+// Los números pueden llegar como string desde Atajos → coerce.
+// ─────────────────────────────────────────────────────────────
+
+const coercedNonNegative = z.coerce.number().nonnegative('Debe ser ≥ 0')
+
+export const voiceStockSchema = z.object({
+  userId: uuid,
+  ingrediente: nonEmptyString,
+  cantidad: coercedNonNegative.optional(),
+  minimo: coercedNonNegative.optional(),
+  unidad: z.enum(UNIDADES).optional(),
 })
