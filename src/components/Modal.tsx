@@ -46,15 +46,16 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
     <dialog
       ref={dialogRef}
       className={`
-        w-full ${sizeClasses[size]} rounded-xl border border-gray-200 bg-white p-0 shadow-2xl
+        w-full mx-4 sm:mx-auto ${sizeClasses[size]} rounded-xl border border-gray-200 bg-white p-0 shadow-2xl
         backdrop:bg-gray-900/50 backdrop:backdrop-blur-sm
         open:animate-in open:fade-in-0 open:zoom-in-95
+        max-h-[90dvh] flex flex-col
       `}
       onClick={(e) => {
         if (e.target === dialogRef.current) onClose()
       }}
     >
-      <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+      <div className="flex shrink-0 items-center justify-between border-b border-gray-100 px-5 py-4">
         <h2 className="text-base font-semibold text-gray-900">{title}</h2>
         <button
           onClick={onClose}
@@ -66,7 +67,7 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
           </svg>
         </button>
       </div>
-      <div className="p-5">{children}</div>
+      <div className="overflow-y-auto p-5">{children}</div>
     </dialog>
   )
 }

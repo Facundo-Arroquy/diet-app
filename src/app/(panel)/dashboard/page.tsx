@@ -83,8 +83,8 @@ export default function DashboardPage() {
               {[
                 { href: '/registro',     icon: '✍️',  label: 'Registrar comida' },
                 { href: '/dieta',        icon: '🎯',  label: 'Mi dieta' },
+                { href: '/stock',        icon: '📦',  label: 'Stock' },
                 { href: '/ingredientes', icon: '🥦',  label: 'Ingredientes' },
-                { href: '/categorias',   icon: '🗂️', label: 'Categorías' },
               ].map(({ href, icon, label }) => (
                 <Link
                   key={href}
@@ -153,22 +153,22 @@ export default function DashboardPage() {
                               <thead>
                                 <tr className="text-xs text-gray-500 uppercase tracking-wider">
                                   <th className="text-left pb-2 font-medium">Ingrediente</th>
-                                  <th className="text-right pb-2 font-medium">Gramos</th>
-                                  <th className="text-right pb-2 font-medium">Kcal</th>
-                                  <th className="text-right pb-2 font-medium">Prot.</th>
+                                  <th className="text-right pb-2 font-medium">g</th>
+                                  <th className="text-right pb-2 font-medium hidden sm:table-cell">Kcal</th>
+                                  <th className="text-right pb-2 font-medium hidden sm:table-cell">Prot.</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-gray-100">
                                 {log.items.map(item => {
                                   const ingr = ingredientMap.get(item.ingredientId)
-                                  const kcal = ingr ? Math.round(ingr.calorias * item.grams / 100) : null
-                                  const prot = ingr ? Math.round(ingr.proteinas * item.grams / 100 * 10) / 10 : null
+                                  const kcal = ingr ? Math.round(ingr.macros.calorias * item.grams / 100) : null
+                                  const prot = ingr ? Math.round(ingr.macros.proteinas * item.grams / 100 * 10) / 10 : null
                                   return (
                                     <tr key={item.id}>
-                                      <td className="py-1.5 text-gray-800">{ingr?.nombre ?? item.ingredientId}</td>
-                                      <td className="py-1.5 text-right text-gray-600">{item.grams} g</td>
-                                      <td className="py-1.5 text-right text-gray-600">{kcal ?? '—'}</td>
-                                      <td className="py-1.5 text-right text-gray-600">{prot != null ? `${prot} g` : '—'}</td>
+                                      <td className="py-1.5 text-gray-800 max-w-[140px] truncate">{ingr?.nombre ?? item.ingredientId}</td>
+                                      <td className="py-1.5 text-right text-gray-600">{item.grams}g</td>
+                                      <td className="py-1.5 text-right text-gray-600 hidden sm:table-cell">{kcal ?? '—'}</td>
+                                      <td className="py-1.5 text-right text-gray-600 hidden sm:table-cell">{prot != null ? `${prot}g` : '—'}</td>
                                     </tr>
                                   )
                                 })}

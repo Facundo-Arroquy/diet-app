@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/hooks/useUser'
 import { Sidebar } from '@/components/Sidebar'
+import { BottomNav } from '@/components/BottomNav'
 
 export default function PanelLayout({ children }: { children: React.ReactNode }) {
   const { activeUser } = useUser()
   const router = useRouter()
+  const [stockMode, setStockMode] = useState(false)
 
   useEffect(() => {
     if (activeUser === null) {
@@ -19,12 +21,13 @@ export default function PanelLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-4xl px-6 py-8">
+      <Sidebar stockMode={stockMode} onToggleStockMode={() => setStockMode(v => !v)} />
+      <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+        <div className="mx-auto max-w-4xl px-4 py-6 md:px-6 md:py-8">
           {children}
         </div>
       </main>
+      <BottomNav stockMode={stockMode} onToggleStockMode={() => setStockMode(v => !v)} />
     </div>
   )
 }

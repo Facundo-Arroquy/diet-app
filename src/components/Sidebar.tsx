@@ -6,14 +6,20 @@ import { useUser } from '@/hooks/useUser'
 import { useRouter } from 'next/navigation'
 
 const navItems = [
-  { href: '/dashboard',   label: 'Dashboard',    icon: '📊' },
-  { href: '/registro',    label: 'Registrar',    icon: '✍️' },
-  { href: '/dieta',       label: 'Mi dieta',     icon: '🥗' },
-  { href: '/ingredientes',label: 'Ingredientes', icon: '🥦' },
-  { href: '/categorias',  label: 'Categorías',   icon: '🗂️' },
+  { href: '/dashboard',   label: 'Dashboard',    icon: '📊', stockOnly: false },
+  { href: '/registro',    label: 'Registrar',    icon: '✍️', stockOnly: false },
+  { href: '/dieta',       label: 'Mi dieta',     icon: '🥗', stockOnly: false },
+  { href: '/stock',       label: 'Stock',        icon: '📦', stockOnly: true  },
+  { href: '/ingredientes',label: 'Ingredientes', icon: '🥦', stockOnly: true  },
+  { href: '/categorias',  label: 'Categorías',   icon: '🗂️', stockOnly: true  },
 ]
 
-export function Sidebar() {
+interface SidebarProps {
+  stockMode: boolean
+  onToggleStockMode: () => void
+}
+
+export function Sidebar({ stockMode, onToggleStockMode }: SidebarProps) {
   const pathname = usePathname()
   const { activeUser, clearUser } = useUser()
   const router = useRouter()
@@ -23,8 +29,10 @@ export function Sidebar() {
     router.push('/')
   }
 
+  const visibleItems = stockMode ? navItems.filter(i => i.stockOnly) : navItems
+
   return (
-    <aside className="flex h-full w-60 flex-col border-r border-gray-200 bg-white">
+    <aside className="hidden md:flex h-full w-60 flex-col border-r border-gray-200 bg-white">
       {/* Logo */}
       <div className="border-b border-gray-100 px-4 py-5">
         <span className="text-xl font-bold text-brand-700">🌿 DietApp</span>
@@ -47,7 +55,7 @@ export function Sidebar() {
       {/* Nav */}
       <nav aria-label="Navegación principal" className="flex-1 overflow-y-auto py-3">
         <ul className="space-y-0.5 px-2">
-          {navItems.map(({ href, label, icon }) => {
+          {visibleItems.map(({ href, label, icon }) => {
             const active = pathname === href || pathname.startsWith(href + '/')
             return (
               <li key={href}>
@@ -73,7 +81,17 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-gray-100 px-4 py-3">
+      <div className="border-t border-gray-100 px-4 py-3 space-y-2">
+        <button
+          onClick={onToggleStockMode}
+          className={`w-full rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+            stockMode
+              ? 'bg-brand-600 text-white hover:bg-brand-700'
+              : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+          }`}
+        >
+          {stockMode ? '📦 Modo stock — activo' : '📦 Modo stock'}
+        </button>
         <p className="text-xs text-gray-400">DietApp v0.1.0</p>
       </div>
     </aside>
