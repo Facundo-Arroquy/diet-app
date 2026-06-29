@@ -87,7 +87,8 @@ export async function upsertStockByVoice(
     let nuevaCantidad = cantidad
     if (modo === 'sumar') nuevaCantidad = (existing.cantidad ?? 0) + cantidad
     if (modo === 'restar') nuevaCantidad = Math.max(0, (existing.cantidad ?? 0) - cantidad)
-    item = await repos.stock.update(existing.id, { cantidad: nuevaCantidad, unidad, minimo })
+    const minimoFinal = input.minimo !== undefined ? minimo : (existing.minimo ?? 0)
+    item = await repos.stock.update(existing.id, { cantidad: nuevaCantidad, unidad, minimo: minimoFinal })
     accion = 'actualizado'
   } else {
     item = await repos.stock.create({
