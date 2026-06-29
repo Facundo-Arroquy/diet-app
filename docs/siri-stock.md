@@ -22,7 +22,7 @@ VOICE_API_TOKEN=una-cadena-larga-y-secreta
 El endpoint queda en:
 
 ```
-POST  https://TU-DOMINIO/api/voice/stock
+POST  https://diet-app-eta-blush.vercel.app/api/voice/stock
 ```
 
 Necesita el token en el header `x-voice-token` (o en `?token=...`) y este

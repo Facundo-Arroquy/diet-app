@@ -143,4 +143,5 @@ export const voiceStockSchema = z.object({
   cantidad: coercedNonNegative.optional(),
   minimo: coercedNonNegative.optional(),
   unidad: z.enum(UNIDADES).optional(),
+  modo: z.enum(['set', 'sumar', 'restar']).optional(),
 })

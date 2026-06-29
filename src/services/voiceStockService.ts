@@ -22,6 +22,7 @@ export interface VoiceStockInput {
   cantidad?: number
   minimo?: number
   unidad?: string
+  modo?: 'set' | 'sumar' | 'restar'
 }
 
 export interface VoiceStockResult {
@@ -77,11 +78,15 @@ export async function upsertStockByVoice(
   // 4. Cargar o actualizar el item de stock del usuario
   const stockItems = await repos.stock.findByUserId(input.userId)
   const existing = stockItems.find(s => s.ingredientId === ingredient!.id)
+  const modo = input.modo ?? 'set'
 
   let item: StockItem
   let accion: 'creado' | 'actualizado'
   if (existing) {
-    item = await repos.stock.update(existing.id, { cantidad, unidad, minimo })
+    let nuevaCantidad = cantidad
+    if (modo === 'sumar') nuevaCantidad = (existing.cantidad ?? 0) + cantidad
+    if (modo === 'restar') nuevaCantidad = Math.max(0, (existing.cantidad ?? 0) - cantidad)
+    item = await repos.stock.update(existing.id, { cantidad: nuevaCantidad, unidad, minimo })
     accion = 'actualizado'
   } else {
     item = await repos.stock.create({
@@ -94,10 +99,17 @@ export async function upsertStockByVoice(
     accion = 'creado'
   }
 
-  const mensaje =
-    accion === 'creado'
-      ? `Agregué ${item.ingredientNombre} al stock: ${cantidad} ${unidad}, mínimo ${minimo} ${unidad}.`
-      : `Actualicé ${item.ingredientNombre}: ${cantidad} ${unidad}, mínimo ${minimo} ${unidad}.`
+  const cantidadFinal = item.cantidad ?? 0
+  let mensaje: string
+  if (accion === 'creado') {
+    mensaje = `Agregué ${item.ingredientNombre} al stock: ${cantidadFinal} ${unidad}, mínimo ${minimo} ${unidad}.`
+  } else if (modo === 'sumar') {
+    mensaje = `Sumé ${cantidad} ${unidad} de ${item.ingredientNombre}. Stock actual: ${cantidadFinal} ${unidad}.`
+  } else if (modo === 'restar') {
+    mensaje = `Resté ${cantidad} ${unidad} de ${item.ingredientNombre}. Stock actual: ${cantidadFinal} ${unidad}.`
+  } else {
+    mensaje = `Actualicé ${item.ingredientNombre}: ${cantidadFinal} ${unidad}, mínimo ${minimo} ${unidad}.`
+  }
 
   return { item, ingredienteCreado, accion, mensaje }
 }
