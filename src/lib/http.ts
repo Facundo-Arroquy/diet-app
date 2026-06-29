@@ -17,6 +17,10 @@ export function badRequest(message: string, details?: unknown): NextResponse {
   return NextResponse.json({ error: message, details }, { status: 400 })
 }
 
+export function unauthorized(message = 'No autorizado'): NextResponse {
+  return NextResponse.json({ error: message }, { status: 401 })
+}
+
 export function notFound(message = 'No encontrado'): NextResponse {
   return NextResponse.json({ error: message }, { status: 404 })
 }
