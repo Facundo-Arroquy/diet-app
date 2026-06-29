@@ -201,16 +201,41 @@ export default function StockPage() {
     }
   }
 
+  // Toggle mobile: 'stock' | 'shopping'
+  const [mobileView, setMobileView] = useState<'stock' | 'shopping'>('stock')
+
   // ── Render ─────────────────────────────────────────────────
 
   if (loading) return <PageLoader />
   if (error) return <ErrorMessage message={error} onRetry={load} />
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] gap-4 overflow-hidden">
+    <div className="flex h-[calc(100vh-4rem)] flex-col md:flex-row gap-4 overflow-hidden">
+
+      {/* ══ TABS MOBILE (solo visible en mobile) ══════════════ */}
+      <div className="flex md:hidden shrink-0 rounded-2xl border border-gray-200 bg-white overflow-hidden">
+        <button
+          onClick={() => setMobileView('stock')}
+          className={`flex-1 py-3 text-sm font-semibold transition-colors ${mobileView === 'stock' ? 'bg-brand-600 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+        >
+          📦 En stock
+          <span className="ml-1.5 text-xs opacity-70">({items.length})</span>
+        </button>
+        <button
+          onClick={() => setMobileView('shopping')}
+          className={`flex-1 py-3 text-sm font-semibold transition-colors relative ${mobileView === 'shopping' ? 'bg-red-500 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+        >
+          🛒 Compras
+          {shoppingListAll.length > 0 && (
+            <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-xs font-bold ${mobileView === 'shopping' ? 'bg-white/30 text-white' : 'bg-red-100 text-red-700'}`}>
+              {shoppingListAll.length}
+            </span>
+          )}
+        </button>
+      </div>
 
       {/* ══ PANEL IZQUIERDO: Lista de compras ══════════════════ */}
-      <div className="flex w-1/2 flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden">
+      <div className={`${mobileView === 'shopping' ? 'flex' : 'hidden'} md:flex w-full md:w-1/2 flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden`}>
         <div className="border-b border-gray-100 px-4 py-3 space-y-2">
           <div className="flex items-center gap-2">
             <span className="text-lg">🛒</span>
@@ -273,7 +298,7 @@ export default function StockPage() {
       </div>
 
       {/* ══ PANEL DERECHO: En stock ═════════════════════════════ */}
-      <div className="flex w-1/2 flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden">
+      <div className={`${mobileView === 'stock' ? 'flex' : 'hidden'} md:flex w-full md:w-1/2 flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden`}>
         <div className="border-b border-gray-100 px-4 py-3 flex items-center gap-2">
           <span className="text-lg">📦</span>
           <h2 className="font-semibold text-gray-900">En stock</h2>
