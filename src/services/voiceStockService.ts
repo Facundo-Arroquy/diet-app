@@ -17,7 +17,7 @@ const DEFAULT_GRAMS_PER_PORTION = 100
 const DEFAULT_UNIDAD = 'u'
 
 export interface VoiceStockInput {
-  userId: string
+  userId?: string
   ingrediente: string
   cantidad?: number
   minimo?: number
@@ -49,13 +49,14 @@ export async function upsertStockByVoice(
   repos: Repositories,
   input: VoiceStockInput,
 ): Promise<VoiceStockResult> {
+  const userId = input.userId!
   const nombre = input.ingrediente.trim()
   const cantidad = input.cantidad ?? 0
   const minimo = input.minimo ?? 0
   const unidad = input.unidad ?? DEFAULT_UNIDAD
 
   // 1. Validar usuario
-  const user = await repos.users.findById(input.userId)
+  const user = await repos.users.findById(userId)
   if (!user) throw new Error('Usuario no encontrado')
 
   // 2. Buscar ingrediente por nombre (case-insensitive)
@@ -76,7 +77,7 @@ export async function upsertStockByVoice(
   }
 
   // 4. Cargar o actualizar el item de stock del usuario
-  const stockItems = await repos.stock.findByUserId(input.userId)
+  const stockItems = await repos.stock.findByUserId(userId)
   const existing = stockItems.find(s => s.ingredientId === ingredient!.id)
   const modo = input.modo ?? 'set'
 
@@ -90,7 +91,7 @@ export async function upsertStockByVoice(
     accion = 'actualizado'
   } else {
     item = await repos.stock.create({
-      userId: input.userId,
+      userId: userId,
       ingredientId: ingredient.id,
       cantidad,
       unidad,

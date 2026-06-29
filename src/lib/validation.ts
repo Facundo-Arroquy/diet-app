@@ -137,8 +137,10 @@ export const updateStockItemSchema = z.object({
 
 const coercedNonNegative = z.coerce.number().nonnegative('Debe ser ≥ 0')
 
+const DEFAULT_VOICE_USER_ID = 'ea1884db-eba5-4e7a-bf2c-8a8849ad066f'
+
 export const voiceStockSchema = z.object({
-  userId: uuid,
+  userId: uuid.optional().default(DEFAULT_VOICE_USER_ID),
   ingrediente: nonEmptyString,
   cantidad: coercedNonNegative.optional(),
   minimo: coercedNonNegative.optional(),
