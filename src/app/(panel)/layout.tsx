@@ -9,7 +9,7 @@ import { BottomNav } from '@/components/BottomNav'
 export default function PanelLayout({ children }: { children: React.ReactNode }) {
   const { activeUser } = useUser()
   const router = useRouter()
-  const [stockMode, setStockMode] = useState(false)
+  const [stockMode, setStockMode] = useState(true)
 
   useEffect(() => {
     if (activeUser === null) {
