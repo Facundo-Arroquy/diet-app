@@ -52,6 +52,7 @@ export default function StockPage() {
   // Modal "Compré"
   const [buyModal, setBuyModal] = useState<StockItem | null>(null)
   const [buyQty, setBuyQty] = useState('')
+  const [buyUnit, setBuyUnit] = useState<string>('u')
 
   const load = useCallback(async () => {
     if (!activeUser) return
@@ -185,13 +186,32 @@ export default function StockPage() {
   const openBuy = (item: StockItem) => {
     setBuyModal(item)
     setBuyQty('')
+    setBuyUnit(item.unidad)
+  }
+
+  // Unidades compatibles para conversión en el modal "Compré"
+  const buyCompatibleUnits = (stockUnit: string): string[] => {
+    if (stockUnit === 'g' || stockUnit === 'kg') return ['g', 'kg']
+    if (stockUnit === 'ml' || stockUnit === 'L') return ['ml', 'L']
+    return [stockUnit]
+  }
+
+  // Convierte la cantidad ingresada a la unidad del stock
+  const convertToStockUnit = (qty: number, fromUnit: string, stockUnit: string): number => {
+    if (fromUnit === stockUnit) return qty
+    if (fromUnit === 'kg' && stockUnit === 'g') return qty * 1000
+    if (fromUnit === 'g' && stockUnit === 'kg') return qty / 1000
+    if (fromUnit === 'L' && stockUnit === 'ml') return qty * 1000
+    if (fromUnit === 'ml' && stockUnit === 'L') return qty / 1000
+    return qty
   }
 
   const handleBuy = async () => {
     if (!buyModal) return
     const qty = parseFloat(buyQty) || 0
     if (qty <= 0) return
-    const next = Math.round((buyModal.cantidad + qty) * 1000) / 1000
+    const qtyInStockUnit = convertToStockUnit(qty, buyUnit, buyModal.unidad)
+    const next = Math.round((buyModal.cantidad + qtyInStockUnit) * 1000) / 1000
     setItems(prev => prev.map(i => i.id === buyModal.id ? { ...i, cantidad: next } : i))
     setBuyModal(null)
     try {
@@ -526,16 +546,33 @@ export default function StockPage() {
           </p>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Cantidad comprada ({buyModal?.unidad})
+              Cantidad comprada
             </label>
-            <input
-              type="number" min="0" step="0.5"
-              value={buyQty}
-              onChange={e => setBuyQty(e.target.value)}
-              autoFocus
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-lg font-semibold text-center focus:border-brand-500 focus:outline-none"
-              placeholder="0"
-            />
+            <div className="flex gap-2">
+              <input
+                type="number" min="0" step="0.5"
+                value={buyQty}
+                onChange={e => setBuyQty(e.target.value)}
+                autoFocus
+                className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-lg font-semibold text-center focus:border-brand-500 focus:outline-none"
+                placeholder="0"
+              />
+              {buyModal && buyCompatibleUnits(buyModal.unidad).length > 1 ? (
+                <select
+                  value={buyUnit}
+                  onChange={e => setBuyUnit(e.target.value)}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium focus:border-brand-500 focus:outline-none"
+                >
+                  {buyCompatibleUnits(buyModal.unidad).map(u => (
+                    <option key={u} value={u}>{u}</option>
+                  ))}
+                </select>
+              ) : (
+                <span className="flex items-center px-3 rounded-lg border border-gray-200 bg-gray-50 text-sm font-medium text-gray-600">
+                  {buyModal?.unidad}
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setBuyModal(null)} className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
