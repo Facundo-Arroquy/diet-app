@@ -36,6 +36,7 @@ export default function StockPage() {
   const [search, setSearch] = useState('')
   const [selectedCat, setSelectedCat] = useState<string | null>(null)
   const [selectedCatShopping, setSelectedCatShopping] = useState<string | null>(null)
+  const [searchShopping, setSearchShopping] = useState('')
 
   // Modal agregar/editar
   const [modalOpen, setModalOpen] = useState(false)
@@ -106,9 +107,11 @@ export default function StockPage() {
   const shoppingCatIds = new Set(shoppingListAll.map(i => ingrCatMap.get(i.ingredientId)).filter(Boolean))
   const shoppingCats = categories.filter(c => shoppingCatIds.has(c.id))
     .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
-  const shoppingList = shoppingListAll.filter(i =>
-    !selectedCatShopping || ingrCatMap.get(i.ingredientId) === selectedCatShopping
-  )
+  const shoppingList = shoppingListAll.filter(i => {
+    if (selectedCatShopping && ingrCatMap.get(i.ingredientId) !== selectedCatShopping) return false
+    if (searchShopping && !i.ingredientNombre.toLowerCase().includes(searchShopping.toLowerCase())) return false
+    return true
+  })
   const filteredItems = items.filter(i => {
     if (search && !i.ingredientNombre.toLowerCase().includes(search.toLowerCase())) return false
     if (selectedCat && ingrCatMap.get(i.ingredientId) !== selectedCat) return false
@@ -266,6 +269,13 @@ export default function StockPage() {
               </span>
             )}
           </div>
+          <input
+            type="text"
+            value={searchShopping}
+            onChange={e => setSearchShopping(e.target.value)}
+            placeholder="Buscar en lista..."
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
+          />
           {shoppingCats.length > 0 && (
             <div className="flex gap-1.5 overflow-x-auto pb-0.5">
               <button
